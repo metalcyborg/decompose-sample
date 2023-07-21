@@ -3,11 +3,16 @@ package com.example.common.list.view.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,12 +28,13 @@ fun DogsList(component: DogListComponent) {
 
     Scaffold(
         topBar = {
-            TopAppBar {
-                Text(
-                    text = "Breeds",
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Breeds"
+                    )
+                }
+            )
         }
     ) {
         if (breeds.isEmpty()) {
@@ -41,16 +47,16 @@ fun DogsList(component: DogListComponent) {
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
-                    .padding(horizontal = 16.dp)
             ) {
                 items(breeds) {
                     Text(
                         text = "${it.name.replaceFirstChar { firstChar -> firstChar.uppercase() }} ${it.subBreed ?: ""}",
                         modifier = Modifier
-                            .padding(vertical = 8.dp)
+                            .fillMaxWidth()
                             .clickable {
                                 component.onItemClicked(it)
                             }
+                            .padding(vertical = 8.dp, horizontal = 16.dp)
                     )
                     Divider(modifier = Modifier.height(1.dp))
                 }

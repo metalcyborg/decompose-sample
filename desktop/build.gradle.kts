@@ -11,9 +11,9 @@ version = "1.0-SNAPSHOT"
 
 kotlin {
     jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "11"
-        }
+       compilations.all {
+           kotlinOptions.jvmTarget = "17"
+       }
         withJava()
     }
     sourceSets {

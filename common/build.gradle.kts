@@ -11,9 +11,9 @@ version = "1.0-SNAPSHOT"
 kotlin {
     android()
     jvm("desktop") {
-        compilations.all {
-            kotlinOptions.jvmTarget = "11"
-        }
+       compilations.all {
+           kotlinOptions.jvmTarget = "17"
+       }
     }
     sourceSets {
         val ktorVersion = "2.3.2"
@@ -29,7 +29,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
-                implementation("androidx.compose.ui:ui-graphics:1.4.1")
+                implementation("androidx.compose.ui:ui-graphics:1.4.3")
             }
         }
         val commonTest by getting {
@@ -61,14 +61,16 @@ kotlin {
 }
 
 android {
+    namespace = "com.example.common"
+
     compileSdk = 33
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = 24
         targetSdk = 33
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
+   compileOptions {
+       sourceCompatibility = JavaVersion.VERSION_17
+       targetCompatibility = JavaVersion.VERSION_17
+   }
 }

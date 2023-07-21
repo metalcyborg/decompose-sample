@@ -7,12 +7,14 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.subscribe
 import com.example.common.details.domain.BreedDetailsInteractor
 import com.example.common.list.models.domain.Breed
-import com.example.common.details.models.domain.BreedDetails
+import com.example.common.mainDispatcher
 import com.example.common.utils.coroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.logging.Level
+import java.util.logging.Logger
 
 interface DogDetailsComponent {
 
@@ -20,6 +22,8 @@ interface DogDetailsComponent {
     val breedImage: Value<LoadingState<ImageBitmap>>
 
     fun onCloseClicked()
+
+    fun onBackButtonClicked()
 }
 
 class DogDetailsComponentImpl(
@@ -29,18 +33,32 @@ class DogDetailsComponentImpl(
     private val onFinished: () -> Unit
 ) : DogDetailsComponent, ComponentContext by componentContext {
 
+    private val logger = Logger.getLogger("Breed list")
+
     init {
         lifecycle.subscribe(
-            onCreate = { loadBreedImage() }
+            onCreate = {
+                logger.log(Level.INFO, "onCreate")
+                loadBreedImage()
+            },
+            onStart = { logger.log(Level.INFO, "onStart") },
+            onResume = { logger.log(Level.INFO, "onResume") },
+            onPause = { logger.log(Level.INFO, "onPause") },
+            onStop = { logger.log(Level.INFO, "onStop") },
+            onDestroy = { logger.log(Level.INFO, "onDestroy") }
         )
     }
 
-    private val scope = coroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope = coroutineScope(mainDispatcher + SupervisorJob())
 
     private val _breedImage = MutableValue<LoadingState<ImageBitmap>>(LoadingState.Loading)
     override val breedImage: Value<LoadingState<ImageBitmap>> = _breedImage
 
     override fun onCloseClicked() {
+        onFinished()
+    }
+
+    override fun onBackButtonClicked() {
         onFinished()
     }
 
