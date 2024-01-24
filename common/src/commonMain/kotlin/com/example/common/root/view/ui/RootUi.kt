@@ -13,6 +13,8 @@ import com.example.common.stackAnimator
 @Composable
 fun RootUi(component: RootComponent) {
     val stack by component.childStack.subscribeAsState()
+    val dialog by component.dialog.subscribeAsState()
+    val dialogComponent = dialog.child?.instance
 
     Children(
         stack = stack,
@@ -22,5 +24,8 @@ fun RootUi(component: RootComponent) {
             is RootComponent.Child.ListChild -> DogsList(instance.component)
             is RootComponent.Child.DetailsChild -> DogDetails(instance.component)
         }
+    }
+    if (dialogComponent != null) {
+        DialogUi(dialogComponent)
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.lifecycle.subscribe
 import com.example.common.details.domain.BreedDetailsInteractor
 import com.example.common.list.models.domain.Breed
@@ -35,6 +36,13 @@ class DogDetailsComponentImpl(
 
     private val logger = Logger.getLogger("Breed list")
 
+    private val scope = coroutineScope(mainDispatcher + SupervisorJob())
+
+    private val _breedImage = MutableValue<LoadingState<ImageBitmap>>(LoadingState.Loading)
+    override val breedImage: Value<LoadingState<ImageBitmap>> = _breedImage
+
+    private val loadedImage: ImageKeeper? = instanceKeeper.get("IMAGE") as ImageKeeper?
+
     init {
         lifecycle.subscribe(
             onCreate = {
@@ -49,11 +57,6 @@ class DogDetailsComponentImpl(
         )
     }
 
-    private val scope = coroutineScope(mainDispatcher + SupervisorJob())
-
-    private val _breedImage = MutableValue<LoadingState<ImageBitmap>>(LoadingState.Loading)
-    override val breedImage: Value<LoadingState<ImageBitmap>> = _breedImage
-
     override fun onCloseClicked() {
         onFinished()
     }
@@ -63,12 +66,24 @@ class DogDetailsComponentImpl(
     }
 
     private fun loadBreedImage() {
-        scope.launch {
-            val image = withContext(Dispatchers.IO) {
-                interactor.loadBreedImage(breed)
-            }
+        if (loadedImage != null) {
+            val image = loadedImage.imageBitmap
             _breedImage.value = LoadingState.Loaded(image)
+        } else {
+            scope.launch {
+                val image = withContext(Dispatchers.IO) {
+                    interactor.loadBreedImage(breed)
+                }
+                instanceKeeper.put("IMAGE", ImageKeeper(image))
+                _breedImage.value = LoadingState.Loaded(image)
+            }
         }
+    }
+}
+
+private data class ImageKeeper(val imageBitmap: ImageBitmap): InstanceKeeper.Instance {
+    override fun onDestroy() {
+
     }
 }
 

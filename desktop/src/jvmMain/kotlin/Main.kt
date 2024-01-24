@@ -8,7 +8,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleC
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.example.common.App
 import com.example.common.root.view.component.RootComponentImpl
-
+import kotlin.system.exitProcess
 
 @OptIn(ExperimentalDecomposeApi::class)
 fun main() {
@@ -16,7 +16,8 @@ fun main() {
 
     val root = runOnUiThread {
         RootComponentImpl(
-            componentContext = DefaultComponentContext(lifecycle)
+            componentContext = DefaultComponentContext(lifecycle),
+            onExit = { exitProcess(0) }
         )
     }
 

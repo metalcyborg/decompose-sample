@@ -11,7 +11,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val root = RootComponentImpl(defaultComponentContext())
+        val root = RootComponentImpl(
+            componentContext = defaultComponentContext(),
+            onExit = { finish() }
+        )
 
         setContent {
             App(root)
